@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from .models import Article, Tag
+from django.shortcuts import render, redirect
+from .models import Article, Tag ,Comment
+
 
 
 def articleList(request):
@@ -33,3 +34,13 @@ def article(request,pk):
 
     # return render(request , 'article/article.html',params)
     return render(request , 'index-2.html', params)
+
+def newComment(request,pk):
+    if request.method=='POST':
+        text = request.POST.get('comment')
+        art = Article.objects.get(id=pk)
+        comment = Comment.objects.create(body=text , article = art)
+        comment.save()
+        art.comments.add(comment)
+        art.save()
+    return redirect('article', pk=pk)
